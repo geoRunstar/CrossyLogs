@@ -32,12 +32,12 @@ void Game::LoadContent() {
 
 	log_obj = new Log*[this->rows][COLS];
 
-	for(int i = 0; i < rows; i++){
+	for(int i = rows-1; i >=0; i--){
 		for(int j = 0; j < COLS; j++){
 			
 			dest.x = (j*64) + (j*80);
 			int d;
-			dest.y = 310 - (i * 64);
+			dest.y = 310 - (((rows-1)-i) * 64);
 
 			if(i % 2 == 0){
 				d = 1;
@@ -65,9 +65,8 @@ void Game::LoadContent() {
 	Eground.h = 50;
 
 	dest.x = 384;
-	dest.y = 385;
+	dest.y = 384;
 	frog = new Frog(frog_text, this->renderer, dest, 64,jump_text);
-
 }
 void Game::Update(double delta) {
 #ifndef __UPDATE_ONLY__
@@ -111,13 +110,29 @@ void Game::Update(double delta) {
 //#ifdef __PARALLEL__
 //#pragma omp parallel for num_threads(NUM_THREADS) collapse(2) reduction(||:huh)
 //#endif
-	for(int k = 0; k < rows; k++){
+	//for(int k = 0; k < rows; k++){
 		for(int kk = 0; kk < COLS; kk++){
 			if(!hit){
-				hit = frog->Collision(&log_obj[k][kk]->destination_rect);
-			}
+			if(frog->current_row+(row_offset) > rows-1){
+				//hit = frog->Collision(&log_obj[k][kk]->destination_rect);
+				hit = frog->Collision(&log_obj[frog->current_row+(row_offset)-1][kk]->destination_rect);
+	}else if(frog->current_row+(row_offset) == rows-1){
+
+	hit = ( frog->Collision(&log_obj[frog->current_row+(row_offset)-1][kk]->destination_rect) || frog->Collision(&log_obj[frog->current_row+(row_offset)][kk]->destination_rect) );
+}
+
+else if(frog->current_row+(row_offset) == 0){
+
+	hit = ( frog->Collision(&log_obj[frog->current_row+(row_offset)+1][kk]->destination_rect) || frog->Collision(&log_obj[frog->current_row+(row_offset)][kk]->destination_rect) );
+}
+else{
+	hit = (frog->Collision(&log_obj[frog->current_row+(row_offset)+1][kk]->destination_rect) || frog->Collision(&log_obj[frog->current_row+(row_offset)-1][kk]->destination_rect)||frog->Collision(&log_obj[frog->current_row+(row_offset)][kk]->destination_rect) );
 		}
-	}
+				
+}
+		}
+	cout<< frog->current_row+(row_offset)<<endl;
+	
 	if(!hit && (frog->jump == 64)){
 		frog->Reset();
 		upCount = 0;
@@ -192,6 +207,7 @@ Game::Game(int NUM_THREADS, int rows, int winWidth, int winHeight) {
     running = true;
 	this->NUM_THREADS = NUM_THREADS;
 	this->rows = rows;
+	this->row_offset = rows-6;
 
     // Initialize video subsystem
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {

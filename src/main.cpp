@@ -28,7 +28,7 @@ void UpdateAOSOA(vec2d8 *objs, int size, int threads);
 int main(int argc, char* argv[]) {
 
 #ifdef __GAME__
-    Game crossyLogs = Game(8, 6);
+    Game crossyLogs = Game(8, 10);
 	
     while (crossyLogs.getStatus() == true) {
         
@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
 
         // Delay based on time to process frame
         if (delta < 16) {
-            printf("Sleeping %ums\n", 16u - delta);
+            //printf("Sleeping %ums\n", 16u - delta);
             SDL_Delay(16u - delta);
         }
     }

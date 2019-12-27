@@ -12,6 +12,7 @@ public:
 	int jump = 64;
 	int offset = 16;
 	int direction;
+	int current_row;
 
     Frog(SDL_Texture *tex, SDL_Renderer *rend, SDL_Rect dest, int jump_dist, SDL_Texture *jump_tex) : GameObject(tex, rend, dest) {
         
@@ -19,6 +20,9 @@ public:
         destination_rect.w = 32;
         destination_rect.h = 32;
 		orginal = dest;
+		y_position = orginal.y;
+		x_position = orginal.x;
+		current_row = y_position/64;
 		this->jump_tex = jump_tex;
 		this->tex = tex;
     }
@@ -45,7 +49,10 @@ public:
 			{
             	x_position = on_log->x;
 				destination_rect.x = x_position;
+	
+		
         	}
+ 	current_row = y_position/64;
 		}
     }
 

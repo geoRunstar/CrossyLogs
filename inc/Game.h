@@ -27,6 +27,7 @@ class Game {
     SDL_Renderer *renderer;
     int NUM_THREADS;
     int rows;
+    int row_offset;
     bool running;
 
     Log* (*log_obj)[6];
